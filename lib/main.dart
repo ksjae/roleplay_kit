@@ -1,9 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:dart_openai/openai.dart';
-import 'env/env.dart';
+import 'package:roleplay_kit/api/openai.dart';
+import 'models/message_bubble.dart';
 
 void main() {
-  OpenAI.apiKey = Env.apiKey;
+  // var chatStream = OpenAI.instance.chat.createStream(
+  //   model: "gpt-3.5-turbo",
+  //   messages: [
+  //     OpenAIChatCompletionChoiceMessageModel(
+  //       content: "너는 판타지 소설을 다른 사람과 같이 작성하는 작가야. 주인공의 행동 이외의 모든 것을 작성하면 돼.",
+  //       role: OpenAIChatMessageRole.system,
+  //     )
+  //   ],
+  // );
+
+  // chatStream.listen((chatStreamEvent) {
+  //   print(chatStreamEvent); // ...
+  // });
   runApp(const MainApp());
 }
 
@@ -29,6 +41,14 @@ class _ChatWindowState extends State<ChatWindow> {
   @override
   Widget build(BuildContext context) {
     var playerName = 'Mister Adventurer';
+    const userBubbleDesign = BubbleDesign(
+      color: Colors.lightBlue,
+      alignment: Alignment.topRight,
+    );
+    var botBubbleDesign = BubbleDesign(
+      color: Colors.grey.shade200,
+      alignment: Alignment.topLeft,
+    );
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
@@ -86,7 +106,9 @@ class _ChatWindowState extends State<ChatWindow> {
             physics: const NeverScrollableScrollPhysics(),
             itemBuilder: (context, index) {
               return MessageBubble(
-                  message: "message", isUserInput: index % 2 == 0);
+                message: "message",
+                role: index % 2 == 0 ? Roles.generator : Roles.user,
+              );
             },
           ),
           Align(
@@ -146,34 +168,5 @@ class _ChatWindowState extends State<ChatWindow> {
         ],
       ),
     );
-  }
-}
-
-class MessageBubble extends StatelessWidget {
-  const MessageBubble(
-      {super.key, required this.message, required this.isUserInput});
-  final String message;
-  final bool isUserInput;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.only(left: 14, right: 14, top: 10, bottom: 10),
-      child: Align(
-        alignment: isUserInput ? Alignment.topLeft : Alignment.topRight,
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            color: isUserInput ? Colors.grey.shade200 : Colors.blue[200],
-          ),
-          padding: const EdgeInsets.all(16),
-          child: Text(
-            message,
-            style: TextStyle(fontSize: 15),
-          ),
-        ),
-      ),
-    );
-    ;
   }
 }
