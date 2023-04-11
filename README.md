@@ -5,7 +5,7 @@ A new Flutter project for providing custom text game experience
 
 ### Pipeline
 CURRENTLY ON : Basic ChatGPT client (with a guided prompt)
-UP NEXT : Character generation (AI/Procedural)
+UP NEXT : Lang Selection & Character generation (AI/Procedural)
 
 ## Features (TBD)
 - AI-backed (thru API) content generation & presentation

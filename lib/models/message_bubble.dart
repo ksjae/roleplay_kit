@@ -11,6 +11,7 @@ class MessageBubble extends StatefulWidget {
         : const BubbleDesign(
             color: Colors.grey,
             alignment: Alignment.topLeft,
+            padding: EdgeInsets.only(left: 15, right: 30, top: 10, bottom: 10),
           );
   }
   final String message;
@@ -25,7 +26,7 @@ class _MessageBubbleState extends State<MessageBubble> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.only(left: 14, right: 14, top: 10, bottom: 10),
+      padding: widget.design.padding,
       child: Align(
         alignment: widget.design.alignment,
         child: Container(
@@ -49,9 +50,12 @@ class BubbleDesign {
     this.color = Colors.blue,
     this.alignment = Alignment.topRight,
     this.shadowColor = Colors.grey,
+    this.padding =
+        const EdgeInsets.only(left: 15, right: 15, top: 10, bottom: 10),
   });
 
   final Color color;
   final Alignment alignment;
   final Color shadowColor;
+  final EdgeInsets padding;
 }
