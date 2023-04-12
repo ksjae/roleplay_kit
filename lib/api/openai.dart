@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dart_openai/openai.dart';
 import '../env/env.dart';
 import '../models/message_bubble.dart';
@@ -23,15 +25,16 @@ class ChatApi {
     return chatCompletion.choices.first.message.content;
   }
 
-  Stream<String> chatStream(
-      List<OpenAIChatCompletionChoiceMessageModel> messages) {
-    var stream = OpenAI.instance.chat.createStream(
-      model: _model,
-      messages: messages,
-    );
-
-    // No, I do NOT need to close the stream. It will close itself
-    return stream.map((event) => event.choices.first.delta.content!);
+  void streamChat(
+    List<OpenAIChatCompletionChoiceMessageModel> messages,
+    StreamController<String> streamController,
+  ) {
+    OpenAI.instance.chat
+        .createStream(
+          model: _model,
+          messages: messages,
+        )
+        .listen((event) => event.choices.first.delta.content!);
   }
 
   List<OpenAIChatCompletionChoiceMessageModel> parseMessages(

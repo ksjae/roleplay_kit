@@ -24,14 +24,15 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       home: ChatWindow(),
     );
   }
 }
 
 class ChatWindow extends StatefulWidget {
-  const ChatWindow({super.key});
+  ChatWindow({super.key});
+  final userInputController = TextEditingController();
 
   @override
   State<ChatWindow> createState() => _ChatWindowState();
@@ -96,56 +97,8 @@ class _ChatWindowState extends State<ChatWindow> {
           ),
           Align(
             alignment: Alignment.bottomLeft,
-            child: Container(
-              padding: const EdgeInsets.only(left: 10, bottom: 10, top: 10),
-              height: 60,
-              width: double.infinity,
-              color: Colors.white,
-              child: Row(
-                children: [
-                  GestureDetector(
-                    onTap: () {},
-                    child: Container(
-                      height: 30,
-                      width: 30,
-                      decoration: BoxDecoration(
-                        color: Colors.lightBlue,
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      child: const Icon(
-                        Icons.add,
-                        color: Colors.white,
-                        size: 20,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 15,
-                  ),
-                  const Expanded(
-                    child: TextField(
-                      decoration: InputDecoration(
-                        hintText: 'Write message...',
-                        hintStyle: TextStyle(color: Colors.black54),
-                        border: InputBorder.none,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 15,
-                  ),
-                  FloatingActionButton(
-                    onPressed: () {},
-                    backgroundColor: Colors.blue,
-                    elevation: 0,
-                    child: const Icon(
-                      Icons.send,
-                      color: Colors.white,
-                      size: 18,
-                    ),
-                  ),
-                ],
-              ),
+            child: InputField(
+              userInputController: widget.userInputController,
             ),
           ),
         ],
@@ -179,6 +132,71 @@ class Messages extends StatelessWidget {
           role: Roles.generator,
         ),
       ],
+    );
+  }
+}
+
+class InputField extends StatelessWidget {
+  const InputField({
+    Key? key,
+    required this.userInputController,
+  }) : super(key: key);
+  final TextEditingController userInputController;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.only(left: 10, bottom: 10, top: 10),
+      height: 60,
+      width: double.infinity,
+      color: Colors.white,
+      child: Row(
+        children: [
+          GestureDetector(
+            onTap: () {},
+            child: Container(
+              height: 30,
+              width: 30,
+              decoration: BoxDecoration(
+                color: Colors.lightBlue,
+                borderRadius: BorderRadius.circular(30),
+              ),
+              child: const Icon(
+                Icons.add,
+                color: Colors.white,
+                size: 20,
+              ),
+            ),
+          ),
+          const SizedBox(
+            width: 15,
+          ),
+          Expanded(
+            child: TextField(
+              decoration: const InputDecoration(
+                hintText: 'What do you do?',
+                hintStyle: TextStyle(color: Colors.black54),
+                border: InputBorder.none,
+              ),
+              maxLines: null,
+              controller: userInputController,
+            ),
+          ),
+          const SizedBox(
+            width: 15,
+          ),
+          FloatingActionButton(
+            onPressed: () {},
+            backgroundColor: Colors.blue,
+            elevation: 0,
+            child: const Icon(
+              Icons.send,
+              color: Colors.white,
+              size: 18,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
