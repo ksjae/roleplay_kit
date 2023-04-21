@@ -83,6 +83,9 @@ class _MessageBubbleState extends State<MessageBubble> {
               );
             } else if (snapshot.hasData) {
               generatedText += snapshot.data!;
+              // if (generatedText.length < 5) {
+              //   print(snapshot.data!);
+              // }
               return BubbleText(text: generatedText);
             } else {
               return const BubbleText(
@@ -133,7 +136,7 @@ class BubbleText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
+    return SelectableText(
       text,
       style: const TextStyle(fontSize: 15),
     );
