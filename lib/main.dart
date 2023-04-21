@@ -3,19 +3,6 @@ import 'package:roleplay_kit/api/openai.dart';
 import 'models/message_bubble.dart';
 
 void main() {
-  // var chatStream = OpenAI.instance.chat.createStream(
-  //   model: "gpt-3.5-turbo",
-  //   messages: [
-  //     OpenAIChatCompletionChoiceMessageModel(
-  //       content: "너는 판타지 소설을 다른 사람과 같이 작성하는 작가야. 주인공의 행동 이외의 모든 것을 작성하면 돼.",
-  //       role: OpenAIChatMessageRole.system,
-  //     )
-  //   ],
-  // );
-
-  // chatStream.listen((chatStreamEvent) {
-  //   print(chatStreamEvent); // ...
-  // });
   runApp(const MainApp());
 }
 
@@ -33,6 +20,7 @@ class MainApp extends StatelessWidget {
 class ChatWindow extends StatefulWidget {
   ChatWindow({super.key});
   final userInputController = TextEditingController();
+  final openAIAPI = ChatApi();
 
   @override
   State<ChatWindow> createState() => _ChatWindowState();
@@ -42,12 +30,12 @@ class _ChatWindowState extends State<ChatWindow> {
   List<MessageBubble> messages = [
     MessageBubble(
       message:
-          "헤프 키루나는 의사로서 지난 10년간 전쟁이 벌어진 대륙의 작은 마을에서 일하며 환자들을 치료하고 있었다. 그러던 어느 날, 마을 근처에 있는 숲에서 이상한 소리가 들려왔다. 헤프는 궁금해져 그 소리가 어디서 나오는지 찾아나섰다. 길을 따라 걸어가다가 그는 갑자기 가지에 매여 있는 남자를 발견했다. 그 남자는 천천히 눈을 떴고, 헤프가 다가가자 입을 열었다. \"나는 마법사다. 그리고 네가 나를 구해준 것에 감사한다.\" 헤프는 깜짝 놀랐지만, 그는 이 마법사를 치료해주기로 결정했다. \n헤프는 이 마법사를 자신의 집으로 데려와 치료를 시작했다. 그러나 그는 마법사가 다치지 않은 것을 깨달았다. 그 대신 그는 마법사가 가지고 있던 마법책을 얻게 되었다. 그 책은 이 세상의 어떠한 마법도 담고 있었다. 이제부터 헤프는 그 마법책을 통해 새로운 세계를 발견하게 될 것이다.",
-      role: Roles.generator,
+          "던전 앤 드래곤 같은 TRPG의 진행자가 되어 게임을 진행해. 내가 하는 행동은 결정하지 않되 내 행동을 바탕으로 일어나는 모든 행동을 작가처럼 글을 써. 장소와 다른 등장인물의 이름은 너가 만들어.",
+      role: Roles.system,
     ),
     MessageBubble(
-      message: "먼저 그는 연금술에 관한 부분을 찾았다. 하지만",
-      role: Roles.user,
+      message: "좋습니다. TRPG 게임의 진행자로서 여러분의 이야기를 써드리겠습니다. 먼저 캐릭터의 이름과 직업을 알려주세요.",
+      role: Roles.generator,
     ),
   ];
   @override
@@ -177,9 +165,20 @@ class _ChatWindowState extends State<ChatWindow> {
           role: Roles.user,
         ),
       );
+      messages.add(_createTextWidgetFromAI());
     });
-    widget.userInputController
-        .clear(); // Optional: Clear the TextField after adding the Text widget
+    widget.userInputController.clear();
+  }
+
+  MessageBubble _createTextWidgetFromAI() {
+    // What if there are multiple messages?
+    return MessageBubble(
+      message: loadingMessage,
+      role: Roles.generator,
+      doGenerate: true,
+      history: messages,
+      openAIAPI: widget.openAIAPI,
+    );
   }
 }
 

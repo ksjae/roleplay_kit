@@ -7,8 +7,9 @@ class MessageBubble extends StatefulWidget {
       {super.key,
       required this.message,
       required this.role,
-      this.generate = false,
-      this.history}) {
+      this.doGenerate = false,
+      this.history,
+      this.openAIAPI}) {
     design = role == Roles.user
         ? const BubbleDesign(
             color: Colors.lightBlue,
@@ -19,62 +20,95 @@ class MessageBubble extends StatefulWidget {
             alignment: Alignment.topLeft,
             padding: EdgeInsets.only(left: 15, right: 30, top: 10, bottom: 10),
           );
-    if (generate) {
-      _streamController = StreamController<String>();
-      if (history == null) {
-        throw Exception('Chat history must be provided for generation');
-      }
-      openAIAPI.streamChat(
-          openAIAPI.parseMessages(history!), _streamController);
-    }
   }
   final String message;
   final Roles role;
   late final BubbleDesign design;
-  late final bool generate;
-  late final StreamController<String> _streamController;
-  late final openAIAPI = ChatApi();
+  late final bool doGenerate; // If true, listens to AI stream
+  final ChatApi? openAIAPI;
   final List<MessageBubble>? history;
 
   @override
   State<MessageBubble> createState() => _MessageBubbleState();
+
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'MessageBubble{message: $message, role: $role, design: $design, doGenerate: $doGenerate, openAIAPI: $openAIAPI, history: $history}';
+  }
 }
 
 class _MessageBubbleState extends State<MessageBubble> {
+  var _generated = false;
+  var _generating = false;
+  String generatedText = '';
+
   @override
   Widget build(BuildContext context) {
-    if (!widget.generate) {
-      return Container(
-        padding: widget.design.padding,
-        child: Align(
-          alignment: widget.design.alignment,
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              color: widget.design.color,
-            ),
-            padding: const EdgeInsets.all(16),
-            child: Text(
-              widget.message,
-              style: const TextStyle(fontSize: 15),
-            ),
-          ),
-        ),
-      );
+    print('_generated: $_generated');
+    Widget bubbleContent = BubbleText(
+      text: generatedText,
+    );
+    if (widget.role == Roles.system) {
+      return const SizedBox.shrink();
     }
-    return StreamBuilder(
-        stream: widget._streamController.stream,
-        builder: (context, AsyncSnapshot<String> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Text('Loading...');
-          } else if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
-          } else if (snapshot.hasData) {
-            return Text(snapshot.data!);
-          } else {
-            return const Text('No Response :(');
-          }
+
+    if (_generated) {
+      bubbleContent = BubbleText(
+        text: generatedText,
+      );
+    } else if (widget.doGenerate) {
+      var streamController = StreamController<String>();
+
+      if (widget.history == null) {
+        throw Exception('Chat history must be provided for generation');
+      }
+      if (widget.openAIAPI == null) {
+        throw Exception('OpenAI API must be provided for generation');
+      }
+      widget.openAIAPI!.streamChat(
+          widget.openAIAPI!.parseMessages(widget.history!), streamController,
+          () {
+        setState(() {
+          _generated = true;
         });
+      });
+      bubbleContent = StreamBuilder(
+          stream: streamController.stream,
+          builder: (context, AsyncSnapshot<String> snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const BubbleText(text: 'Loading...');
+            } else if (snapshot.hasError) {
+              return BubbleText(
+                text: 'Error: ${snapshot.error}',
+              );
+            } else if (snapshot.hasData) {
+              generatedText += snapshot.data!;
+              return BubbleText(text: generatedText);
+            } else {
+              return const BubbleText(
+                text: 'No Response :(',
+              );
+            }
+          });
+    } else {
+      generatedText = widget.message;
+      bubbleContent = BubbleText(text: generatedText);
+    }
+
+    return Container(
+      padding: widget.design.padding,
+      child: Align(
+        alignment: widget.design.alignment,
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            color: widget.design.color,
+          ),
+          padding: const EdgeInsets.all(16),
+          child: bubbleContent,
+        ),
+      ),
+    );
   }
 }
 
@@ -91,4 +125,17 @@ class BubbleDesign {
   final Alignment alignment;
   final Color shadowColor;
   final EdgeInsets padding;
+}
+
+class BubbleText extends StatelessWidget {
+  final String text;
+  const BubbleText({super.key, required this.text});
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      text,
+      style: const TextStyle(fontSize: 15),
+    );
+  }
 }

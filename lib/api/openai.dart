@@ -28,13 +28,21 @@ class ChatApi {
   void streamChat(
     List<OpenAIChatCompletionChoiceMessageModel> messages,
     StreamController<String> streamController,
+    Function callback,
   ) {
     OpenAI.instance.chat
         .createStream(
           model: _model,
           messages: messages,
         )
-        .listen((event) => event.choices.first.delta.content!);
+        .listen(
+          (event) => {
+            event.choices.first.delta.content == null
+                ? null
+                : streamController.add(event.choices.first.delta.content!)
+          },
+          onDone: () => {streamController.close(), callback()},
+        );
   }
 
   List<OpenAIChatCompletionChoiceMessageModel> parseMessages(
@@ -63,23 +71,4 @@ extension OpenAIRoles on Roles {
   }
 }
 
-// class GenerationStream extends Stream{
-//   GenerationStream({
-//     this.model="gpt-3.5-turbo"
-//   });
-//   final String model;
-
-//   var chatStream = OpenAI.instance.chat.createStream(
-//     model: "gpt-3.5-turbo",
-//     messages: [
-//       OpenAIChatCompletionChoiceMessageModel(
-//         content: "너는 판타지 소설을 다른 사람과 같이 작성하는 작가야. 주인공의 행동 이외의 모든 것을 작성하면 돼.",
-//         role: OpenAIChatMessageRole.system,
-//       )
-//     ],
-//   );
-
-//   this.chatStream.listen((chatStreamEvent) {
-//     print(chatStreamEvent); // ...
-//   });
-// }
+const loadingMessage = '스카이넷에게 물어보는 중...';
