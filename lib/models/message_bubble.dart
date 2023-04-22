@@ -39,12 +39,10 @@ class MessageBubble extends StatefulWidget {
 
 class _MessageBubbleState extends State<MessageBubble> {
   var _generated = false;
-  var _generating = false;
   String generatedText = '';
 
   @override
   Widget build(BuildContext context) {
-    print('_generated: $_generated');
     Widget bubbleContent = BubbleText(
       text: generatedText,
     );
@@ -65,9 +63,8 @@ class _MessageBubbleState extends State<MessageBubble> {
       if (widget.openAIAPI == null) {
         throw Exception('OpenAI API must be provided for generation');
       }
-      widget.openAIAPI!.streamChat(
-          widget.openAIAPI!.parseMessages(widget.history!), streamController,
-          () {
+      ChatApi.streamChat(
+          ChatApi.parseMessages(widget.history!), streamController, () {
         setState(() {
           _generated = true;
         });
@@ -76,7 +73,7 @@ class _MessageBubbleState extends State<MessageBubble> {
           stream: streamController.stream,
           builder: (context, AsyncSnapshot<String> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const BubbleText(text: 'Loading...');
+              return const BubbleText(text: ChatApi.loadingMessage);
             } else if (snapshot.hasError) {
               return BubbleText(
                 text: 'Error: ${snapshot.error}',

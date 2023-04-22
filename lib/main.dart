@@ -20,27 +20,16 @@ class MainApp extends StatelessWidget {
 class ChatWindow extends StatefulWidget {
   ChatWindow({super.key});
   final userInputController = TextEditingController();
-  final openAIAPI = ChatApi();
 
   @override
   State<ChatWindow> createState() => _ChatWindowState();
 }
 
 class _ChatWindowState extends State<ChatWindow> {
-  List<MessageBubble> messages = [
-    MessageBubble(
-      message:
-          "던전 앤 드래곤 같은 TRPG의 진행자가 되어 게임을 진행해. 내가 하는 행동은 결정하지 않되 내 행동을 바탕으로 일어나는 모든 행동을 작가처럼 글을 써. 장소와 다른 등장인물의 이름은 너가 만들어.",
-      role: Roles.system,
-    ),
-    MessageBubble(
-      message: "좋습니다. TRPG 게임의 진행자로서 여러분의 이야기를 써드리겠습니다. 먼저 캐릭터의 이름과 직업을 알려주세요.",
-      role: Roles.generator,
-    ),
-  ];
+  var messages = ChatApi.initialPrompts;
+  var playerName = 'Mister Adventurer';
   @override
   Widget build(BuildContext context) {
-    var playerName = 'Mister Adventurer';
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
@@ -173,11 +162,11 @@ class _ChatWindowState extends State<ChatWindow> {
   MessageBubble _createTextWidgetFromAI() {
     // What if there are multiple messages?
     return MessageBubble(
-      message: loadingMessage,
+      message: ChatApi.loadingMessage,
       role: Roles.generator,
       doGenerate: true,
       history: messages,
-      openAIAPI: widget.openAIAPI,
+      openAIAPI: ChatApi(),
     );
   }
 }
