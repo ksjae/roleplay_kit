@@ -58,13 +58,30 @@ class ChatApi {
   }
 
   static List<OpenAIChatCompletionChoiceMessageModel> parseMessages(
-      List<MessageBubble> messages) {
-    return messages
-        .map((e) => OpenAIChatCompletionChoiceMessageModel(
-              role: e.role.openAI,
-              content: e.message,
-            ))
-        .toList();
+      List<MessageBubble> messages,
+      {bool truncate = false}) {
+    List<OpenAIChatCompletionChoiceMessageModel> parsedMessages = [];
+    int maxChars = 4000;
+    for (var i = messages.length - 1; i >= 0; i--) {
+      if (maxChars <= 0) {
+        break;
+      }
+      maxChars -= messages[i].message.length;
+      if (truncate && maxChars <= 0) {
+        parsedMessages.add(OpenAIChatCompletionChoiceMessageModel(
+          role: messages[i].role.openAI,
+          content: messages[i]
+              .message
+              .substring(0, maxChars + messages[i].message.length),
+        ));
+      } else {
+        parsedMessages.add(OpenAIChatCompletionChoiceMessageModel(
+          role: messages[i].role.openAI,
+          content: messages[i].message,
+        ));
+      }
+    }
+    return parsedMessages.reversed.toList();
   }
 }
 

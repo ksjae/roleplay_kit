@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:roleplay_kit/api/openai.dart';
 import 'models/message_bubble.dart';
+import 'models/character_widgets.dart';
 
 void main() {
   runApp(const MainApp());
@@ -162,7 +163,7 @@ class _ChatWindowState extends State<ChatWindow> {
   MessageBubble _createTextWidgetFromAI() {
     // What if there are multiple messages?
     return MessageBubble(
-      message: ChatApi.loadingMessage,
+      message: "",
       role: Roles.generator,
       doGenerate: true,
       history: messages,
