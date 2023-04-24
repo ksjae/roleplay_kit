@@ -62,6 +62,7 @@ class _ChatWindowState extends State<ChatWindow> {
             ],
           ),
         )),
+        automaticallyImplyLeading: false,
       ),
       body: Column(
         children: [

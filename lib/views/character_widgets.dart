@@ -6,78 +6,66 @@ class CharacterCreation extends StatefulWidget {
   const CharacterCreation({Key? key}) : super(key: key);
 
   @override
-  State<CharacterCreation> createState() => _CharacterCreationState();
+  State<CharacterCreation> createState() => CharacterCreationState();
 }
 
-class _CharacterCreationState extends State<CharacterCreation> {
+class CharacterCreationState extends State<CharacterCreation> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _ageController = TextEditingController();
   CharacterType _type = CharacterType.warrior;
 
-  void _submitCharacter() {
+  Character newCharacter() {
     // Perform validation or save character data and navigate to next page
-    print(Character(
+    return Character(
         name: _nameController.text,
         type: _type,
-        age: int.parse(_ageController.text)));
+        age: int.parse(_ageController.text));
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Character Creation')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('Name:'),
-            TextField(
-              controller: _nameController,
-              decoration:
-                  const InputDecoration(hintText: 'Enter character name'),
-            ),
-            const SizedBox(height: 8),
-            const Text('Age:'),
-            TextField(
-              controller: _ageController,
-              decoration:
-                  const InputDecoration(hintText: 'Enter character age'),
-              keyboardType: const TextInputType.numberWithOptions(
-                decimal: false,
-                signed: false,
-              ),
-              inputFormatters: [
-                FilteringTextInputFormatter.allow(
-                    RegExp(r'^\d+$')), // Allow only numbers and a decimal point
-              ],
-            ),
-            const SizedBox(height: 8),
-            const Text('Gender:'),
-            const SizedBox(height: 16),
-            DropdownButton<String>(
-              value: _type.korean,
-              hint: const Text('Select Class'),
-              items: CharacterType.values
-                  .map<DropdownMenuItem<String>>((CharacterType value) {
-                return DropdownMenuItem<String>(
-                  value: value.korean,
-                  child: Text(value.korean),
-                );
-              }).toList(),
-              onChanged: (String? newValue) {
-                setState(() {
-                  _type = CharacterType.warrior.fromKorean(newValue!);
-                });
-              },
-            ),
-            ElevatedButton(
-              onPressed: _submitCharacter,
-              child: const Text('Create Character'),
-            ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text('Name:'),
+        TextField(
+          controller: _nameController,
+          decoration: const InputDecoration(hintText: 'Enter character name'),
+        ),
+        const SizedBox(height: 8),
+        const Text('Age:'),
+        TextField(
+          controller: _ageController,
+          decoration: const InputDecoration(hintText: 'Enter character age'),
+          keyboardType: const TextInputType.numberWithOptions(
+            decimal: false,
+            signed: false,
+          ),
+          inputFormatters: [
+            FilteringTextInputFormatter.allow(
+                RegExp(r'^\d+$')), // Allow only numbers and a decimal point
           ],
         ),
-      ),
+        const SizedBox(height: 8),
+        const Text('Gender:'),
+        const SizedBox(height: 16),
+        DropdownButton<String>(
+          value: _type.korean,
+          hint: const Text('Select Class'),
+          items: CharacterType.values
+              .map<DropdownMenuItem<String>>((CharacterType value) {
+            return DropdownMenuItem<String>(
+              value: value.korean,
+              child: Text(value.korean),
+            );
+          }).toList(),
+          onChanged: (String? newValue) {
+            setState(() {
+              _type = CharacterType.warrior.fromKorean(newValue!);
+            });
+          },
+        ),
+      ],
     );
   }
 }
