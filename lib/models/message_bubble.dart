@@ -1,6 +1,6 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:roleplay_kit/api/openai.dart';
-import 'dart:async';
 
 class MessageBubble extends StatefulWidget {
   MessageBubble(

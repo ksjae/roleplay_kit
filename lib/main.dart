@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'views/chat_window.dart';
-import 'views/character_widgets.dart';
+import 'package:roleplay_kit/models/character.dart';
+import 'package:roleplay_kit/views/chat_window.dart';
+import 'package:roleplay_kit/views/character_widgets.dart';
 
 void main() {
   runApp(const MainApp());
@@ -18,12 +19,17 @@ class MainApp extends StatelessWidget {
 }
 
 class MainMenu extends StatelessWidget {
-  const MainMenu({super.key});
+  MainMenu({super.key});
+  final character =
+      CharacterModel(name: "", type: CharacterType.warrior, age: 0);
 
   // TODO: Add a new game/continue button
 
   @override
   Widget build(BuildContext context) {
+    character.addListener(() {
+      print(character.toPrompt());
+    });
     return Scaffold(
       appBar: AppBar(
         title: const Text('Roleplay Kit'),
@@ -75,7 +81,8 @@ class MainMenu extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => NewGame()),
+                  MaterialPageRoute(
+                      builder: (context) => NewGame(character: character)),
                 );
               },
               child: const Text('New Game'),
@@ -88,7 +95,9 @@ class MainMenu extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => const CharacterCreation()),
+                      builder: (context) => CharacterCreation(
+                            character: character,
+                          )),
                 );
               },
               child: const Text('Create Character'),
@@ -108,9 +117,15 @@ class MainMenu extends StatelessWidget {
 }
 
 class NewGame extends StatelessWidget {
+  final CharacterModel character;
+
+  const NewGame({super.key, required this.character});
+
   @override
   Widget build(BuildContext context) {
-    const newCharacterView = CharacterCreation();
+    var newCharacterView = CharacterCreation(
+      character: character,
+    );
     return Scaffold(
         appBar: AppBar(
           title: Text('New Game'),

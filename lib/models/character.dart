@@ -1,17 +1,48 @@
-class Character {
-  late String name;
-  late CharacterType type;
-  late int age;
+import 'package:flutter/material.dart';
 
-  Character({required this.name, required this.type, required this.age});
+class CharacterModel extends ChangeNotifier {
+  late String _name;
+  late CharacterType _type;
+  late int _age;
+
+  CharacterModel(
+      {required String name, required CharacterType type, required int age})
+      : _age = age,
+        _type = type,
+        _name = name;
+
+  String get name => _name;
+  CharacterType get type => _type;
+  String get typeString => _type.korean;
+  int get age => _age;
+
+  set name(String name) {
+    _name = name;
+    notifyListeners();
+  }
+
+  set type(CharacterType type) {
+    _type = type;
+    notifyListeners();
+  }
+
+  set age(int age) {
+    _age = age;
+    notifyListeners();
+  }
+
+  void getOlder() {
+    _age++;
+    notifyListeners();
+  }
 
   @override
   String toString() {
-    return 'Character{name: $name, type: $type, age: $age}';
+    return 'Character{name: $_name, type: $_type, age: $_age}';
   }
 
   String toPrompt() {
-    return '이름: $name, 직업: ${type.korean}, 나이: $age';
+    return '이름: $_name, 직업: ${_type.korean}, 나이: $_age';
   }
 }
 

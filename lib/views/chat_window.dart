@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../models/message_bubble.dart';
 import 'package:roleplay_kit/api/openai.dart';
+import 'package:roleplay_kit/models/message_bubble.dart';
 
 class ChatWindow extends StatefulWidget {
   ChatWindow({super.key});

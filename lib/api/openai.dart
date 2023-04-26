@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:dart_openai/openai.dart';
-import '../env/env.dart';
-import '../models/message_bubble.dart';
+import 'package:roleplay_kit/env/env.dart';
+import 'package:roleplay_kit/models/message_bubble.dart';
 
 class ChatApi {
   static const _model = 'gpt-3.5-turbo';
