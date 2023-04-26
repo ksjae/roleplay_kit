@@ -1,26 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../models/character.dart';
+import 'package:roleplay_kit/models/character.dart';
 
 class CharacterCreation extends StatefulWidget {
-  const CharacterCreation({Key? key}) : super(key: key);
+  CharacterCreation({Key? key}) : super(key: key);
+  final character =
+      CharacterModel(name: "", type: CharacterType.warrior, age: 0);
 
   @override
-  State<CharacterCreation> createState() => CharacterCreationState();
+  State<CharacterCreation> createState() => _CharacterCreationState();
 }
 
-class CharacterCreationState extends State<CharacterCreation> {
+class _CharacterCreationState extends State<CharacterCreation> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _ageController = TextEditingController();
-  CharacterType _type = CharacterType.warrior;
-
-  Character newCharacter() {
-    // Perform validation or save character data and navigate to next page
-    return Character(
-        name: _nameController.text,
-        type: _type,
-        age: int.parse(_ageController.text));
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +24,9 @@ class CharacterCreationState extends State<CharacterCreation> {
         TextField(
           controller: _nameController,
           decoration: const InputDecoration(hintText: 'Enter character name'),
+          onChanged: (String value) async {
+            widget.character.name = value;
+          },
         ),
         const SizedBox(height: 8),
         const Text('Age:'),
@@ -45,12 +41,15 @@ class CharacterCreationState extends State<CharacterCreation> {
             FilteringTextInputFormatter.allow(
                 RegExp(r'^\d+$')), // Allow only numbers and a decimal point
           ],
+          onChanged: (String value) async {
+            widget.character.age = int.parse(value);
+          },
         ),
         const SizedBox(height: 8),
         const Text('Gender:'),
         const SizedBox(height: 16),
         DropdownButton<String>(
-          value: _type.korean,
+          value: widget.character.type.korean,
           hint: const Text('Select Class'),
           items: CharacterType.values
               .map<DropdownMenuItem<String>>((CharacterType value) {
@@ -61,7 +60,8 @@ class CharacterCreationState extends State<CharacterCreation> {
           }).toList(),
           onChanged: (String? newValue) {
             setState(() {
-              _type = CharacterType.warrior.fromKorean(newValue!);
+              widget.character.type =
+                  CharacterType.warrior.fromKorean(newValue!);
             });
           },
         ),
