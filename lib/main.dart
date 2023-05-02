@@ -23,13 +23,12 @@ class MainMenu extends StatelessWidget {
   final character =
       CharacterModel(name: "", type: CharacterType.warrior, age: 0);
 
-  // TODO: Add a new game/continue button
+  // TODO: Add a continue button only if a new game is created
 
   @override
   Widget build(BuildContext context) {
-    character.addListener(() {
-      print(character.toPrompt());
-    });
+    bool canContinue = false;
+    // check save file
     return Scaffold(
       appBar: AppBar(
         title: const Text('Roleplay Kit'),
@@ -63,19 +62,25 @@ class MainMenu extends StatelessWidget {
             const SizedBox(
               height: 20,
             ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ChatWindow(),
+            canContinue
+                ? ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ChatWindow(
+                            character: character,
+                          ),
+                        ),
+                      );
+                    },
+                    child: const Text('Continue'),
+                  )
+                : const SizedBox(
+                    height: 0,
                   ),
-                );
-              },
-              child: const Text('Continue'),
-            ),
-            const SizedBox(
-              height: 20,
+            SizedBox(
+              height: canContinue ? 20 : 0,
             ),
             ElevatedButton(
               onPressed: () {
@@ -89,18 +94,6 @@ class MainMenu extends StatelessWidget {
             ),
             const SizedBox(
               height: 20,
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => CharacterCreation(
-                            character: character,
-                          )),
-                );
-              },
-              child: const Text('Create Character'),
             ),
             const SizedBox(
               height: 20,
@@ -123,9 +116,7 @@ class NewGame extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var newCharacterView = CharacterCreation(
-      character: character,
-    );
+    var newCharacterView = CharacterCreation();
     return Scaffold(
         appBar: AppBar(
           title: Text('New Game'),

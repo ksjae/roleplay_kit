@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:roleplay_kit/api/openai.dart';
+import 'package:roleplay_kit/models/character.dart';
 import 'package:roleplay_kit/models/message_bubble.dart';
 
 class ChatWindow extends StatefulWidget {
-  ChatWindow({super.key});
+  ChatWindow({
+    super.key,
+    required this.character,
+  });
   final userInputController = TextEditingController();
+  final CharacterModel character;
 
   @override
   State<ChatWindow> createState() => _ChatWindowState();
@@ -12,7 +17,6 @@ class ChatWindow extends StatefulWidget {
 
 class _ChatWindowState extends State<ChatWindow> {
   var messages = ChatApi.initialPrompts;
-  var playerName = 'Mister Adventurer';
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,7 +36,7 @@ class _ChatWindowState extends State<ChatWindow> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      playerName,
+                      widget.character.name,
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
