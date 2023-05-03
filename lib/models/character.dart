@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:json_annotation/json_annotation.dart';
 
+part 'character.g.dart';
+
+@JsonSerializable()
 class CharacterModel extends ChangeNotifier {
   late String _name;
   late CharacterType _type;
@@ -10,6 +14,11 @@ class CharacterModel extends ChangeNotifier {
       : _age = age,
         _type = type,
         _name = name;
+
+  factory CharacterModel.fromJson(Map<String, dynamic> json) =>
+      _$CharacterModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$CharacterModelToJson(this);
 
   String get name => _name;
   CharacterType get type => _type;

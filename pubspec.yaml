@@ -19,6 +19,8 @@ dev_dependencies:
   flutter_lints: ^2.0.0
   envied_generator: ^0.3.0
   build_runner: ^2.3.3
+  json_serializable: ^6.6.1
+  json_annotation: ^4.8.0
 
 flutter:
   uses-material-design: true

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:roleplay_kit/models/character.dart';
 import 'package:roleplay_kit/views/chat_window.dart';
 import 'package:roleplay_kit/views/character_widgets.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(const MainApp());
@@ -162,4 +163,10 @@ class SecondPage extends StatelessWidget {
       ),
     );
   }
+}
+
+Future<bool> saveCharacter(CharacterModel character) async {
+  final prefs = await SharedPreferences.getInstance();
+  prefs.setString('character', character.toJson().toString());
+  return true;
 }
