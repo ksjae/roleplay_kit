@@ -45,10 +45,20 @@ class _ChatWindowState extends State<ChatWindow> {
                     const SizedBox(
                       height: 6,
                     ),
-                    Column(
+                    Row(
                       children: [
                         Text(
-                          'Online',
+                          widget.character.typeString,
+                          style: TextStyle(
+                            color: Colors.grey.shade600,
+                            fontSize: 13,
+                          ),
+                        ),
+                        SizedBox(
+                          width: 6,
+                        ),
+                        Text(
+                          widget.character.age.toString(),
                           style: TextStyle(
                             color: Colors.grey.shade600,
                             fontSize: 13,

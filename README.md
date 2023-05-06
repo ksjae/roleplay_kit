@@ -36,3 +36,8 @@ Based on [April 2023 pricing](https://openai.com/pricing), expect 0.2 cents per 
 
 ## Misc
 It may take a while for OpenAI API access to be granted, even after adding a payment method.
+
+This project may use copyrighted materials, with permission from respective authors. **These permissions may not apply to forked projects.** Please proceed with caution regarding the following items:
+- Fonts
+- Images
+- Music

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:roleplay_kit/models/character.dart';
 import 'package:roleplay_kit/views/chat_window.dart';
 import 'package:roleplay_kit/views/character_widgets.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(const MainApp());
@@ -87,14 +86,10 @@ class MainMenu extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                      builder: (context) => NewGame(character: character)),
+                  MaterialPageRoute(builder: (context) => NewGame()),
                 );
               },
               child: const Text('New Game'),
-            ),
-            const SizedBox(
-              height: 20,
             ),
             const SizedBox(
               height: 20,
@@ -111,9 +106,7 @@ class MainMenu extends StatelessWidget {
 }
 
 class NewGame extends StatelessWidget {
-  final CharacterModel character;
-
-  const NewGame({super.key, required this.character});
+  const NewGame({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -135,9 +128,13 @@ class NewGame extends StatelessWidget {
               newCharacterView,
               ElevatedButton(
                 onPressed: () {
+                  var c = newCharacterView.character;
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => SecondPage()),
+                    MaterialPageRoute(
+                        builder: (context) => ChatWindow(
+                              character: c,
+                            )),
                   );
                 },
                 child: const Text('START'),
@@ -163,10 +160,4 @@ class SecondPage extends StatelessWidget {
       ),
     );
   }
-}
-
-Future<bool> saveCharacter(CharacterModel character) async {
-  final prefs = await SharedPreferences.getInstance();
-  prefs.setString('character', character.toJson().toString());
-  return true;
 }

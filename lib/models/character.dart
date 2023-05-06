@@ -1,5 +1,7 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 part 'character.g.dart';
 
@@ -19,6 +21,20 @@ class CharacterModel extends ChangeNotifier {
       _$CharacterModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$CharacterModelToJson(this);
+
+  Future save(CharacterModel character) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString('character', jsonEncode(character.toJson()));
+  }
+
+  static Future<CharacterModel?> load() async {
+    final prefs = await SharedPreferences.getInstance();
+    final characterJson = prefs.getString('character');
+    if (characterJson != null) {
+      return CharacterModel.fromJson(jsonDecode(characterJson));
+    }
+    return null;
+  }
 
   String get name => _name;
   CharacterType get type => _type;
