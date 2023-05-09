@@ -24,3 +24,11 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  fonts: 
+    - family: reading
+      fonts:
+        - asset: assets/fonts/KoPubWorld Batang_Pro Medium.otf
+        - asset: assets/fonts/KoPubWorld Batang_Pro Light.otf
+          weight: 300
+        - asset: assets/fonts/KoPubWorld Batang_Pro Bold.otf
+          weight: 700

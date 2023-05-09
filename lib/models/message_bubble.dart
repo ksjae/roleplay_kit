@@ -135,7 +135,7 @@ class BubbleText extends StatelessWidget {
   Widget build(BuildContext context) {
     return SelectableText(
       text,
-      style: const TextStyle(fontSize: 15),
+      style: const TextStyle(fontSize: 15, fontFamily: 'reading'),
     );
   }
 }

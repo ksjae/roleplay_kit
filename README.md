@@ -37,7 +37,26 @@ Based on [April 2023 pricing](https://openai.com/pricing), expect 0.2 cents per 
 ## Misc
 It may take a while for OpenAI API access to be granted, even after adding a payment method.
 
-This project may use copyrighted materials, with permission from respective authors. **These permissions may not apply to forked projects.** Please proceed with caution regarding the following items:
+This project uses copyrighted materials, with permission from respective authors. **These permissions may not apply to forked projects.** Please proceed with caution regarding the following items:
 - Fonts
 - Images
 - Music
+
+## Licenses
+Copyright 2023 Seungjae Kim.
+
+```
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+```
+
+The included example font `KoPub World` is a copyrighted font. **To redistribute with this font, you must acquire a license**. See `KoPub_Font_License.pdf` for details.
