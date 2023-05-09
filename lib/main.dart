@@ -23,11 +23,8 @@ class MainMenu extends StatelessWidget {
   final character =
       CharacterModel(name: "", type: CharacterType.warrior, age: 0);
 
-  // TODO: Add a continue button only if a new game is created
-
   @override
   Widget build(BuildContext context) {
-    bool canContinue = false;
     // check save file
     return Scaffold(
       appBar: AppBar(
@@ -62,25 +59,32 @@ class MainMenu extends StatelessWidget {
             const SizedBox(
               height: 20,
             ),
-            canContinue
-                ? ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ChatWindow(
-                            character: character,
+            FutureBuilder<CharacterModel?>(
+                future: CharacterModel.load(),
+                builder: (context, AsyncSnapshot<CharacterModel?> snapshot) {
+                  if (snapshot.hasData && snapshot.data != null) {
+                    return ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ChatWindow(
+                              character: snapshot.data!,
+                            ),
                           ),
-                        ),
-                      );
-                    },
-                    child: const Text('Continue'),
-                  )
-                : const SizedBox(
-                    height: 0,
-                  ),
-            SizedBox(
-              height: canContinue ? 20 : 0,
+                        );
+                      },
+                      child: const Text('Continue'),
+                    );
+                  } else {
+                    return const ElevatedButton(
+                      onPressed: null,
+                      child: Text('Continue'),
+                    );
+                  }
+                }),
+            const SizedBox(
+              height: 20,
             ),
             ElevatedButton(
               onPressed: () {
@@ -129,6 +133,8 @@ class NewGame extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {
                   var c = newCharacterView.character;
+                  c.save();
+                  print(c.toString());
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -145,19 +151,5 @@ class NewGame extends StatelessWidget {
             ],
           ),
         ));
-  }
-}
-
-class SecondPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Second Page'),
-      ),
-      body: Center(
-        child: Text('Hello, world!'),
-      ),
-    );
   }
 }

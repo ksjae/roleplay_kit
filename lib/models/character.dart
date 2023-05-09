@@ -22,9 +22,9 @@ class CharacterModel extends ChangeNotifier {
 
   Map<String, dynamic> toJson() => _$CharacterModelToJson(this);
 
-  Future save(CharacterModel character) async {
+  Future save() async {
     final prefs = await SharedPreferences.getInstance();
-    prefs.setString('character', jsonEncode(character.toJson()));
+    prefs.setString('character', jsonEncode(toJson()));
   }
 
   static Future<CharacterModel?> load() async {
