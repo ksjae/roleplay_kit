@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:roleplay_kit/models/character.dart';
 import 'package:roleplay_kit/views/chat_window.dart';
 import 'package:roleplay_kit/views/character_widgets.dart';
 
-void main() {
+void main() async {
+  await Hive.initFlutter();
+  await Hive.openBox<String>('save');
   runApp(const MainApp());
 }
 
