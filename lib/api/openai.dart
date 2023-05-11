@@ -31,8 +31,8 @@ class ChatApi {
       model: _model,
       messages: messages
           .map((e) => OpenAIChatCompletionChoiceMessageModel(
-                role: e.role.openAI,
-                content: e.message,
+                role: e.data.role.openAI,
+                content: e.data.text,
               ))
           .toList(),
     );
@@ -68,18 +68,19 @@ class ChatApi {
       if (maxChars <= 0) {
         break;
       }
-      maxChars -= messages[i].message.length;
+      maxChars -= messages[i].data.text.length;
       if (truncate && maxChars <= 0) {
         parsedMessages.add(OpenAIChatCompletionChoiceMessageModel(
-          role: messages[i].role.openAI,
+          role: messages[i].data.role.openAI,
           content: messages[i]
-              .message
-              .substring(0, maxChars + messages[i].message.length),
+              .data
+              .text
+              .substring(0, maxChars + messages[i].data.text.length),
         ));
       } else {
         parsedMessages.add(OpenAIChatCompletionChoiceMessageModel(
-          role: messages[i].role.openAI,
-          content: messages[i].message,
+          role: messages[i].data.role.openAI,
+          content: messages[i].data.text,
         ));
       }
     }

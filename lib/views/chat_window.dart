@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:roleplay_kit/api/openai.dart';
 import 'package:roleplay_kit/models/character.dart';
 import 'package:roleplay_kit/models/message_bubble.dart';
@@ -10,6 +11,7 @@ class ChatWindow extends StatefulWidget {
   });
   final userInputController = TextEditingController();
   final CharacterModel character;
+  final saveBox = Hive.box<List<BubbleData>>('save');
 
   @override
   State<ChatWindow> createState() => _ChatWindowState();
@@ -24,7 +26,7 @@ class _ChatWindowState extends State<ChatWindow> {
         elevation: 0,
         flexibleSpace: SafeArea(
             child: Container(
-          padding: const EdgeInsets.only(right: 16),
+          padding: const EdgeInsets.only(right: 8),
           child: Row(
             children: [
               const SizedBox(
@@ -55,7 +57,7 @@ class _ChatWindowState extends State<ChatWindow> {
                           ),
                         ),
                         SizedBox(
-                          width: 6,
+                          width: 12,
                         ),
                         Text(
                           widget.character.age.toString(),
@@ -69,10 +71,24 @@ class _ChatWindowState extends State<ChatWindow> {
                   ],
                 ),
               ),
-              Icon(
-                Icons.settings,
-                color: Colors.grey.shade700,
-              ),
+              IconButton(
+                  onPressed: () {
+                    var bubbleDataList =
+                        messages.map((msg) => msg.data).toList();
+                    widget.saveBox.put(widget.character.name, bubbleDataList);
+                    print(
+                        'saved ${bubbleDataList.length} items from ${bubbleDataList.first} to ${bubbleDataList.last}');
+                  },
+                  icon: Icon(
+                    Icons.save,
+                    color: Colors.grey.shade700,
+                  )),
+              IconButton(
+                  onPressed: () {},
+                  icon: Icon(
+                    Icons.settings,
+                    color: Colors.grey.shade700,
+                  ))
             ],
           ),
         )),

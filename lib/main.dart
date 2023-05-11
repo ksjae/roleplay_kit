@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:roleplay_kit/models/character.dart';
+import 'package:roleplay_kit/models/message_bubble.dart';
 import 'package:roleplay_kit/views/chat_window.dart';
 import 'package:roleplay_kit/views/character_widgets.dart';
+import 'package:roleplay_kit/api/openai.dart';
 
 void main() async {
   await Hive.initFlutter();
-  await Hive.openBox<String>('save');
+  Hive.registerAdapter(BubbleDataAdapter());
+  Hive.registerAdapter(RolesAdapter());
+  await Hive.openBox<List<BubbleData>>('save');
   runApp(const MainApp());
 }
 
@@ -29,7 +32,6 @@ class MainMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // check save file
     return Scaffold(
       appBar: AppBar(
         title: const Text('Roleplay Kit'),

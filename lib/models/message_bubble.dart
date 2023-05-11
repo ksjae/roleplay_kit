@@ -8,11 +8,15 @@ part 'message_bubble.g.dart';
 class MessageBubble extends StatefulWidget {
   MessageBubble(
       {super.key,
-      required this.message,
-      required this.role,
+      required message,
+      required role,
       this.doGenerate = false,
       this.history,
       this.openAIAPI}) {
+    data = BubbleData(
+      text: message,
+      role: role,
+    );
     design = role == Roles.user
         ? const BubbleDesign(
             color: Colors.lightBlue,
@@ -24,9 +28,8 @@ class MessageBubble extends StatefulWidget {
             padding: EdgeInsets.only(left: 15, right: 30, top: 10, bottom: 10),
           );
   }
-  final String message;
-  final Roles role;
   late final BubbleDesign design;
+  late final BubbleData data;
   late final bool doGenerate; // If true, listens to AI stream
   final ChatApi? openAIAPI;
   final List<MessageBubble>? history;
@@ -36,38 +39,31 @@ class MessageBubble extends StatefulWidget {
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'MessageBubble{message: $message, role: $role, design: $design, doGenerate: $doGenerate, openAIAPI: $openAIAPI, history: $history}';
+    return 'MessageBubble{message: ${data.text} role: ${data.role}, design: $design, doGenerate: $doGenerate, openAIAPI: $openAIAPI, history: $history}';
   }
 
-  static MessageBubble fromBubbleText() {
+  static MessageBubble fromBubbleData(BubbleData data) {
     return MessageBubble(
-      message: '',
-      role: Roles.generator,
-      doGenerate: true,
+      message: data.text,
+      role: data.role,
+      doGenerate: false,
       history: null,
-      openAIAPI: ChatApi(),
+      openAIAPI: null,
     );
   }
 }
 
 class _MessageBubbleState extends State<MessageBubble> {
   var _generated = false;
-  String generatedText = '';
 
   @override
   Widget build(BuildContext context) {
-    Widget bubbleContent = BubbleText(
-      text: generatedText,
-    );
-    if (widget.role == Roles.system) {
+    Widget bubbleContent;
+    if (widget.data.role == Roles.system) {
       return const SizedBox.shrink();
     }
 
-    if (_generated) {
-      bubbleContent = BubbleText(
-        text: generatedText,
-      );
-    } else if (widget.doGenerate) {
+    if (!_generated && widget.doGenerate) {
       var streamController = StreamController<String>();
 
       if (widget.history == null) {
@@ -92,11 +88,11 @@ class _MessageBubbleState extends State<MessageBubble> {
                 text: 'Error: ${snapshot.error}',
               );
             } else if (snapshot.hasData) {
-              generatedText += snapshot.data!;
+              widget.data.text += snapshot.data!;
               // if (generatedText.length < 5) {
               //   print(snapshot.data!);
               // }
-              return BubbleText(text: generatedText);
+              return widget.data.bubbleText;
             } else {
               return const BubbleText(
                 text: 'No Response :(',
@@ -104,8 +100,7 @@ class _MessageBubbleState extends State<MessageBubble> {
             }
           });
     } else {
-      generatedText = widget.message;
-      bubbleContent = BubbleText(text: generatedText);
+      bubbleContent = widget.data.bubbleText;
     }
 
     return Container(
@@ -158,8 +153,17 @@ class BubbleData {
   BubbleData({required this.text, required this.role});
 
   @HiveField(0)
-  final String text;
+  String text;
 
   @HiveField(1)
   final Roles role;
+
+  @override
+  String toString() {
+    return 'BubbleData{text: $text, role: $role}';
+  }
+
+  BubbleText get bubbleText {
+    return BubbleText(text: text);
+  }
 }
