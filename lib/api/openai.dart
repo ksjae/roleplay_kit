@@ -1,8 +1,10 @@
 import 'dart:async';
-
+import 'package:hive/hive.dart';
 import 'package:dart_openai/openai.dart';
 import 'package:roleplay_kit/env/env.dart';
 import 'package:roleplay_kit/models/message_bubble.dart';
+
+part 'openai.g.dart';
 
 class ChatApi {
   static const _model = 'gpt-3.5-turbo';
@@ -85,7 +87,15 @@ class ChatApi {
   }
 }
 
-enum Roles { user, generator, system }
+@HiveType(typeId: 2)
+enum Roles {
+  @HiveField(0, defaultValue: true)
+  user,
+  @HiveField(1)
+  generator,
+  @HiveField(2)
+  system
+}
 
 extension OpenAIRoles on Roles {
   OpenAIChatMessageRole get openAI {

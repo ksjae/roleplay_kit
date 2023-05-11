@@ -12,6 +12,9 @@ dependencies:
   shared_preferences: ^2.0.13
   flutter:
     sdk: flutter
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+  hive_generator: ^2.0.0
 
 dev_dependencies:
   flutter_test:

@@ -1,6 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:roleplay_kit/api/openai.dart';
+
+part 'message_bubble.g.dart';
 
 class MessageBubble extends StatefulWidget {
   MessageBubble(
@@ -34,6 +37,16 @@ class MessageBubble extends StatefulWidget {
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
     return 'MessageBubble{message: $message, role: $role, design: $design, doGenerate: $doGenerate, openAIAPI: $openAIAPI, history: $history}';
+  }
+
+  static MessageBubble fromBubbleText() {
+    return MessageBubble(
+      message: '',
+      role: Roles.generator,
+      doGenerate: true,
+      history: null,
+      openAIAPI: ChatApi(),
+    );
   }
 }
 
@@ -138,4 +151,15 @@ class BubbleText extends StatelessWidget {
       style: const TextStyle(fontSize: 15, fontFamily: 'reading'),
     );
   }
+}
+
+@HiveType(typeId: 1)
+class BubbleData {
+  BubbleData({required this.text, required this.role});
+
+  @HiveField(0)
+  final String text;
+
+  @HiveField(1)
+  final Roles role;
 }
