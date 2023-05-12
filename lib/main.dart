@@ -10,7 +10,7 @@ void main() async {
   await Hive.initFlutter();
   Hive.registerAdapter(BubbleDataAdapter());
   Hive.registerAdapter(RolesAdapter());
-  await Hive.openBox<List<BubbleData>>('save');
+  await Hive.openBox<List<dynamic>>('save');
   runApp(const MainApp());
 }
 

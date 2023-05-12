@@ -8,17 +8,35 @@ class ChatWindow extends StatefulWidget {
   ChatWindow({
     super.key,
     required this.character,
-  });
+  }) {
+    List<BubbleData> save =
+        saveBox.get(character.name, defaultValue: [])?.cast<BubbleData>() ?? [];
+    if (save != []) {
+      messages =
+          save.map((data) => MessageBubble.fromBubbleData(data)).toList();
+    } else {
+      messages = ChatApi.initialPrompts;
+    }
+  }
   final userInputController = TextEditingController();
   final CharacterModel character;
-  final saveBox = Hive.box<List<BubbleData>>('save');
+  final Box<List<dynamic>> saveBox = Hive.box('save');
+  late final List<MessageBubble> messages;
 
   @override
   State<ChatWindow> createState() => _ChatWindowState();
 }
 
 class _ChatWindowState extends State<ChatWindow> {
-  var messages = ChatApi.initialPrompts;
+  var _showMenu = false;
+
+  void save() {
+    var bubbleDataList = widget.messages.map((msg) => msg.data).toList();
+    widget.saveBox.put(widget.character.name, bubbleDataList);
+    print(
+        'saved ${bubbleDataList.length} items from ${bubbleDataList.first} to ${bubbleDataList.last}');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -72,19 +90,17 @@ class _ChatWindowState extends State<ChatWindow> {
                 ),
               ),
               IconButton(
-                  onPressed: () {
-                    var bubbleDataList =
-                        messages.map((msg) => msg.data).toList();
-                    widget.saveBox.put(widget.character.name, bubbleDataList);
-                    print(
-                        'saved ${bubbleDataList.length} items from ${bubbleDataList.first} to ${bubbleDataList.last}');
-                  },
+                  onPressed: save,
                   icon: Icon(
                     Icons.save,
                     color: Colors.grey.shade700,
                   )),
               IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    setState(() {
+                      _showMenu = true;
+                    });
+                  },
                   icon: Icon(
                     Icons.settings,
                     color: Colors.grey.shade700,
@@ -94,83 +110,117 @@ class _ChatWindowState extends State<ChatWindow> {
         )),
         automaticallyImplyLeading: false,
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: Messages(
-              messageList: messages,
+      body: Stack(children: [
+        Column(
+          children: [
+            Expanded(
+              child: Messages(
+                messageList: widget.messages,
+              ),
             ),
-          ),
-          Align(
-            alignment: Alignment.bottomLeft,
-            child: Container(
-              padding: const EdgeInsets.only(left: 10, bottom: 10, top: 10),
-              height: 60,
-              width: double.infinity,
-              color: Colors.white,
-              child: Row(
-                children: [
-                  GestureDetector(
-                    onTap: () {},
-                    child: Container(
-                      height: 30,
-                      width: 30,
-                      decoration: BoxDecoration(
-                        color: Colors.lightBlue,
-                        borderRadius: BorderRadius.circular(30),
+            Align(
+              alignment: Alignment.bottomLeft,
+              child: Container(
+                padding: const EdgeInsets.only(left: 10, bottom: 10, top: 10),
+                height: 60,
+                width: double.infinity,
+                color: Colors.white,
+                child: Row(
+                  children: [
+                    GestureDetector(
+                      onTap: () {},
+                      child: Container(
+                        height: 30,
+                        width: 30,
+                        decoration: BoxDecoration(
+                          color: Colors.lightBlue,
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        child: const Icon(
+                          Icons.add,
+                          color: Colors.white,
+                          size: 20,
+                        ),
                       ),
+                    ),
+                    const SizedBox(
+                      width: 15,
+                    ),
+                    Expanded(
+                      child: TextField(
+                        decoration: const InputDecoration(
+                          hintText: 'What do you do?',
+                          hintStyle: TextStyle(color: Colors.black54),
+                          border: InputBorder.none,
+                        ),
+                        maxLines: null,
+                        controller: widget.userInputController,
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 15,
+                    ),
+                    FloatingActionButton(
+                      onPressed: _createTextWidget,
+                      backgroundColor: Colors.blue,
+                      elevation: 0,
                       child: const Icon(
-                        Icons.add,
+                        Icons.send,
                         color: Colors.white,
-                        size: 20,
+                        size: 18,
                       ),
                     ),
-                  ),
-                  const SizedBox(
-                    width: 15,
-                  ),
-                  Expanded(
-                    child: TextField(
-                      decoration: const InputDecoration(
-                        hintText: 'What do you do?',
-                        hintStyle: TextStyle(color: Colors.black54),
-                        border: InputBorder.none,
-                      ),
-                      maxLines: null,
-                      controller: widget.userInputController,
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+        if (_showMenu)
+          Container(
+            color: Colors.black.withOpacity(0.5),
+            child: Center(
+              child: Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Column(
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        setState(() {
+                          _showMenu = false;
+                        });
+                      },
+                      child: const Text('Close'),
                     ),
-                  ),
-                  const SizedBox(
-                    width: 15,
-                  ),
-                  FloatingActionButton(
-                    onPressed: _createTextWidget,
-                    backgroundColor: Colors.blue,
-                    elevation: 0,
-                    child: const Icon(
-                      Icons.send,
-                      color: Colors.white,
-                      size: 18,
+                    TextButton(
+                      onPressed: () {
+                        save();
+                        Navigator.pop(context);
+                      },
+                      child: const Text('Save & Quit'),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
-        ],
-      ),
+      ]),
     );
   }
 
   void _createTextWidget() {
     setState(() {
-      messages.add(
+      widget.messages.add(
         MessageBubble(
           message: widget.userInputController.text,
           role: Roles.user,
         ),
       );
-      messages.add(_createTextWidgetFromAI());
+      widget.messages.add(_createTextWidgetFromAI());
     });
     widget.userInputController.clear();
   }
@@ -181,7 +231,7 @@ class _ChatWindowState extends State<ChatWindow> {
       message: "",
       role: Roles.generator,
       doGenerate: true,
-      history: messages,
+      history: widget.messages,
       openAIAPI: ChatApi(),
     );
   }
