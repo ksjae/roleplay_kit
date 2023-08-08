@@ -25,6 +25,8 @@ OPEN_AI_API_KEY=<REPLACE WITH YOUR API KEY>
 ```
 Then, run `flutter pub run build_runner build` (one time only)
 
+I currently have no idea on how to use Github Secrets. However, if you need to develop on GH Codespaces, use `flutter run --release -d web-server --web-hostname=0.0.0.0 --web-port=3000` instead of the normal debug op.
+
 ## Costs
 Based on [April 2023 pricing](https://openai.com/pricing), expect 0.2 cents per 300 words of user input (or 750 words total, or ~20 turns?)
 

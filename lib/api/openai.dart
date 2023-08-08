@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:hive/hive.dart';
-import 'package:dart_openai/openai.dart';
+import 'package:dart_openai/dart_openai.dart';
 import 'package:roleplay_kit/env/env.dart';
 import 'package:roleplay_kit/models/message_bubble.dart';
 
